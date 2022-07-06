@@ -1,9 +1,11 @@
-//this is the div where my profile info will appear
+
 const overview = document.querySelector(".overview");
 const username = "JoDepp";
 const repoList = document.querySelector(".repo-list");
 const myRepoInfo = document.querySelector(".repos");
 const repoData = document.querySelector(".repo-data");
+const viewReposButton = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 const gitUserInfo = async function() {
     const userInfo = await fetch(
@@ -39,6 +41,7 @@ const gitRepos = async function() {   //select my repos and sort by recently upd
 };
 
 const repoInfo = function (repos) {  //using repos as the parameter allows the function to accept the data from last API call
+    filterInput.classList.remove("hide");
     for (const repo of repos) {   //loop an create a list item of each repo
         const repoItem = document.createElement("li");   //creates a new HTML element
         repoItem.classList.add("repo");   //adds a new class
@@ -70,9 +73,10 @@ const repoSpecs = async function(repoName) {
 };
 
 const displayRepoInfo = function(repoInfo, languages) {
+   viewReposButton.classList.remove("hide");
     repoData.innerHTML = "";  //empty the the html of repo-data
     repoData.classList.remove("hide");  //shows the class of repoData
-    myRepoInfo.classList.add("hide");  //hides teh element with the class of "repos"
+    myRepoInfo.classList.add("hide");  //hides the element with the class of "repos"
     const div = document.createElement("div");  //create a new div
         div.innerHTML = `
         <h3>Name: ${repoInfo.name}</h3>
@@ -83,3 +87,25 @@ const displayRepoInfo = function(repoInfo, languages) {
         `;
         repoData.append(div);  //appends div to repoData
 };
+
+viewReposButton.addEventListener("click", function () {
+    myRepoInfo.classList.remove("hide");
+    repoData.classList.add("hide");
+    viewReposButton.classList.add("hide");
+});
+
+filterInput.addEventListener("input", function(e) {  //Dynamic Search
+    const searchBoxText = e.target.value; //variable to capture the value of the search text 
+    const repos = document.querySelectorAll(".repo");
+    const searchToLower = searchBoxText.toLowerCase();
+
+
+for(const repo of repos) {    //new variable to reassign the lowercase search text
+    const lowerInnerText = repo.innerText.toLowerCase();
+    if(lowerInnerText.includes(searchBoxText)) {  //see if lowercase repo text includes the lowercase search text
+        repo.classList.remove("hide");  //if it does, show it
+    } else {
+        repo.classList.add("hide");   //if it doesn't, hide it
+    }
+}
+});
